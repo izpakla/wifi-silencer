@@ -1,0 +1,69 @@
+plugins {
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.hilt.plugin
+    alias libs.plugins.kotlin.kapt
+    alias libs.plugins.navigation.safeargs.plugin
+}
+
+android {
+    namespace 'rs.rocketbyte.wifisilencer'
+    compileSdk libs.versions.compileSdk.get().toInteger()
+
+    defaultConfig {
+        applicationId "rs.rocketbyte.wifisilencer"
+        minSdk libs.versions.minSdk.get().toInteger()
+        targetSdk libs.versions.targetSdk.get().toInteger()
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true // Do not change
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation project(':core')
+
+    implementation libs.android.appcompat
+    implementation libs.android.material
+
+    // Navigation
+    implementation libs.navigation.ui
+    implementation libs.navigation.fragment
+
+    // KTX
+    implementation libs.android.ktx.core
+    implementation libs.android.ktx.fragment
+    implementation libs.android.ktx.lifecycle.livedata
+    implementation libs.android.ktx.lifecycle.viewmodel
+
+    // Hilt
+    implementation libs.android.hilt
+    kapt libs.android.hilt.compiler
+
+    testImplementation libs.test.junit
+    androidTestImplementation libs.android.test.junit
+    androidTestImplementation libs.android.test.espresso
+}
+
+// Allow references to generated code, Hilt
+kapt {
+    correctErrorTypes true
+}
