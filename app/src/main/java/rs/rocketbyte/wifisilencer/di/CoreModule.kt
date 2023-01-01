@@ -6,18 +6,20 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import rs.rocketbyte.wifisilencer.core.usecase.UseCase
-import rs.rocketbyte.wifisilencer.core.util.UseCaseInjector
+import rs.rocketbyte.wifisilencer.core.notification.NotificationCreator
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object UseCaseModule {
+object CoreModule {
 
     @Singleton
     @Provides
-    fun provideUseCase(
+    fun provideNotificationCreator(
         @ApplicationContext context: Context
-    ): UseCase = UseCaseInjector.getUseCase(context)
+    ): NotificationCreator = object : NotificationCreator {
+        override fun buildDndNotification() {
+        }
+    }
 
 }

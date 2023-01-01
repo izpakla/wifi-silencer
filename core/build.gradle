@@ -1,6 +1,8 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
+    alias libs.plugins.hilt.plugin
+    alias libs.plugins.kotlin.kapt
 }
 
 android {
@@ -36,7 +38,16 @@ dependencies {
     implementation libs.android.ktx.core
     implementation libs.android.appcompat
 
+    // Hilt
+    implementation libs.android.hilt
+    kapt libs.android.hilt.compiler
+
     testImplementation libs.test.junit
     androidTestImplementation libs.android.test.junit
     androidTestImplementation libs.android.test.espresso
+}
+
+// Allow references to generated code, Hilt
+kapt {
+    correctErrorTypes true
 }
