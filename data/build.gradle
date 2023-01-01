@@ -33,6 +33,7 @@ android {
 dependencies {
     implementation libs.android.ktx.core
     implementation libs.android.appcompat
+    implementation libs.gson
 
     implementation libs.room.runtime
     annotationProcessor libs.room.compiler

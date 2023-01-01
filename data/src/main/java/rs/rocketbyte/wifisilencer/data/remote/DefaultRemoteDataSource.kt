@@ -1,5 +1,3 @@
 package rs.rocketbyte.wifisilencer.data.remote
 
-internal class DefaultRemoteDataSource : RemoteDataSource {
-
-}
+internal class DefaultRemoteDataSource : RemoteDataSource
