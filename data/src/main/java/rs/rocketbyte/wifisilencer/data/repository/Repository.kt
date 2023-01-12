@@ -1,14 +1,17 @@
 package rs.rocketbyte.wifisilencer.data.repository
 
+import kotlinx.coroutines.flow.Flow
 import rs.rocketbyte.wifisilencer.data.model.RingerMode
+import rs.rocketbyte.wifisilencer.data.model.WifiData
 
 interface Repository {
-    fun getDefaultRingerMode(currentRingerMode: RingerMode): RingerMode
-    fun getRingerMode(ssid: String): RingerMode?
-    fun setDefaultRingerMode(ringerMode: RingerMode)
-    fun setRingerMode(ssid: String, ringerMode: RingerMode): Boolean
-    fun addWifiData(ssid: String, description: String?, ringerMode: RingerMode): Boolean
-    fun updateDescription(ssid: String, description: String?): Boolean
-    fun isMonitoringEnabled(): Boolean
-    fun setMonitoringEnabled(enabled: Boolean)
+    val defaultRingerMode: Flow<RingerMode?>
+    val wifiDataList: Flow<List<WifiData>>
+    var monitoringEnabled: Boolean
+
+    fun addWifiData(wifiData: WifiData)
+    fun updateWifiData(wifiData: WifiData)
+    fun removeWifiData(wifiData: WifiData)
+
+    fun updateDefaultRingerMode(ringerMode: RingerMode)
 }

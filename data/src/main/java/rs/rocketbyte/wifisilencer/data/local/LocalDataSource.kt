@@ -7,7 +7,7 @@ interface LocalDataSource {
     fun getDefaultRingerMode(): RingerMode?
     fun setDefaultRingerMode(ringerMode: RingerMode)
     fun setWifiDataList(wifiDataList: List<WifiData>)
-    fun getWifiDataList(): ArrayList<WifiData>?
+    fun getWifiDataList(): List<WifiData>
     fun isMonitorServiceStarted(): Boolean
     fun setMonitorServiceStarted(started: Boolean)
 }

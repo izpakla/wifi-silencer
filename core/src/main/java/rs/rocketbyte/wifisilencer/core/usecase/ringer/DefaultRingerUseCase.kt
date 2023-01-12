@@ -5,7 +5,7 @@ import android.media.AudioManager
 import androidx.core.content.ContextCompat
 import rs.rocketbyte.wifisilencer.core.model.RingerMode
 
-class DefaultRingerUseCase(private val context: Context) : RingerUseCase {
+internal class DefaultRingerUseCase(private val context: Context) : RingerUseCase {
 
     override fun getCurrentRingerMode(): RingerMode = context.getRingerMode() ?: RingerMode.NORMAL
 

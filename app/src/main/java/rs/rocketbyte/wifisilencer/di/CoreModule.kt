@@ -1,5 +1,6 @@
 package rs.rocketbyte.wifisilencer.di
 
+import android.app.Notification
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -18,7 +19,11 @@ object CoreModule {
     fun provideNotificationCreator(
         @ApplicationContext context: Context
     ): NotificationCreator = object : NotificationCreator {
-        override fun buildDndNotification() {
+        override fun showDndPermissionMissing() {
+        }
+
+        override fun createServiceNotification(): Notification {
+            TODO("Not yet implemented")
         }
     }
 

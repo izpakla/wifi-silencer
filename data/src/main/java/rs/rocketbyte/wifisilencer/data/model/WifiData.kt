@@ -3,7 +3,7 @@ package rs.rocketbyte.wifisilencer.data.model
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-data class WifiData internal constructor(
+data class WifiData constructor(
     @SerializedName("ssid")
     val ssid: String,
     @SerializedName("description")

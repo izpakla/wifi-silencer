@@ -7,6 +7,10 @@
 
     <application>
 
+        <service
+            android:name=".service.WifiMonitorService"
+            android:foregroundServiceType="location" />
+
         <receiver
             android:name=".receivers.MonitorServiceRestartReceiver"
             android:exported="true">

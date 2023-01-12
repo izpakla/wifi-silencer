@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import dagger.hilt.android.AndroidEntryPoint
 import rs.rocketbyte.wifisilencer.core.manager.WifiSilencer
+import rs.rocketbyte.wifisilencer.core.service.WifiMonitorService
 import javax.inject.Inject
 
 
@@ -18,12 +19,8 @@ class MonitorServiceRestartReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("MonitorServiceRestart", "action: ${intent.action}")
 
-        if (wifiSilencer.isMonitoringEnabled()) {
-            when (intent.action) {
-                /*Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> WifiMonitorService.startService(
-                    context
-                )*/
-            }
+        if (wifiSilencer.monitoringEnabled && (intent.action == Intent.ACTION_BOOT_COMPLETED || intent.action == Intent.ACTION_MY_PACKAGE_REPLACED)) {
+            WifiMonitorService.startService(context)
         }
     }
 

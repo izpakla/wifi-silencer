@@ -6,7 +6,7 @@ import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import androidx.core.content.ContextCompat
 
-class DefaultWifiUseCase(private val context: Context) : WifiUseCase {
+internal class DefaultWifiUseCase(private val context: Context) : WifiUseCase {
 
     override fun getCurrentSsid(): String? = context.getCurrentSsid()
 

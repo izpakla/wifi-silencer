@@ -1,13 +1,20 @@
 package rs.rocketbyte.wifisilencer.core.manager
 
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import rs.rocketbyte.wifisilencer.core.model.RingerMode
+import rs.rocketbyte.wifisilencer.core.model.WifiRingerInfo
 import rs.rocketbyte.wifisilencer.core.model.mapper.map
 import rs.rocketbyte.wifisilencer.core.notification.NotificationCreator
+import rs.rocketbyte.wifisilencer.core.service.WifiMonitorService
 import rs.rocketbyte.wifisilencer.core.usecase.dnd.DndUseCase
 import rs.rocketbyte.wifisilencer.core.usecase.ringer.RingerUseCase
 import rs.rocketbyte.wifisilencer.core.usecase.wifi.WifiUseCase
@@ -17,6 +24,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class WifiSilencerManager @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: Repository,
     private val wifiUseCase: WifiUseCase,
     private val ringerUseCase: RingerUseCase,
@@ -24,54 +32,64 @@ internal class WifiSilencerManager @Inject constructor(
     private val notificationCreator: NotificationCreator
 ) : WifiSilencer, WifiConnectionListener {
 
-    private val managerJob = SupervisorJob()
-    private val managerScope = CoroutineScope(IO + managerJob)
+    private val job = SupervisorJob()
+    private val coroutineScope = CoroutineScope(IO + job)
+
+    override val defaultRingerMode: Flow<RingerMode?>
+        get() = repository.defaultRingerMode.map { it?.map() }
+
+    override val wifiRingerInfoList: Flow<List<WifiRingerInfo>>
+        get() = repository.wifiDataList.map { wifiDataList -> wifiDataList.map { it.map() } }
+
+    override var monitoringEnabled: Boolean
+        get() = repository.monitoringEnabled
+        set(value) {
+            repository.monitoringEnabled = value
+            if (value) {
+                WifiMonitorService.startService(context)
+            } else {
+                WifiMonitorService.stopService(context)
+            }
+        }
 
     override fun onConnectionChanged(isConnected: Boolean) {
-        managerScope.launch {
+        coroutineScope.launch {
             readWifi(isConnected)
         }
     }
 
     override fun setDefaultRingerMode(ringerMode: RingerMode) {
-        repository.setDefaultRingerMode(ringerMode.map())
+        repository.updateDefaultRingerMode(ringerMode.map())
+
         recheck()
     }
 
-    override fun setRingerMode(ssid: String, ringerMode: RingerMode) {
-        if (repository.setRingerMode(ssid, ringerMode.map())) {
-            recheck()
-        }
+    override fun updateWifiRingerInfo(wifiRingerInfo: WifiRingerInfo) {
+        repository.updateWifiData(wifiRingerInfo.map())
+
+        recheck()
     }
 
-    override fun addWifiData(
-        ssid: String,
-        description: String?,
-        ringerMode: RingerMode
-    ) {
-        if (repository.addWifiData(ssid, description, ringerMode.map())) {
-            recheck()
-        }
+    override fun removeWifiData(wifiRingerInfo: WifiRingerInfo) {
+        repository.removeWifiData(wifiRingerInfo.map())
+
+        recheck()
     }
 
-    override fun updateDescription(ssid: String, description: String?) {
-        if (repository.updateDescription(ssid, description)) {
-            recheck()
-        }
+    override fun addWifiData(wifiRingerInfo: WifiRingerInfo) {
+        repository.addWifiData(wifiRingerInfo.map())
+        recheck()
     }
-
-    override fun isMonitoringEnabled(): Boolean = repository.isMonitoringEnabled()
 
     private fun recheck() {
-        managerScope.launch {
+        coroutineScope.launch {
             readWifi(wifiUseCase.isConnectedToWifi())
         }
     }
 
     private suspend fun readWifi(isConnected: Boolean) {
         if (isConnected) {
-            // Try 3 times if cannot read SSID, do nothing
-            repeat(3) {
+            repeat(3) { // Retry count
                 val currentSsid = wifiUseCase.getCurrentSsid()
                 if (!currentSsid.isNullOrBlank()) {
                     onWifiConnected(currentSsid)
@@ -84,27 +102,33 @@ internal class WifiSilencerManager @Inject constructor(
         }
     }
 
-    private fun onWifiNotConnected() {
-        setDefaultRingerMode()
+    private suspend fun onWifiNotConnected() {
+        setRingerMode(
+            repository.defaultRingerMode.last()?.map()
+                ?: ringerUseCase.getCurrentRingerMode()
+        )
     }
 
     private fun onWifiConnected(ssid: String) {
-        val ringerMode = repository.getRingerMode(ssid)
-        if (ringerMode != null) {
-            setRingerMode(ringerMode.map())
-        } else {
-            setDefaultRingerMode()
+        coroutineScope.launch {
+            val ringerMode: WifiRingerInfo? = wifiRingerInfoList.last().find { it.ssid == ssid }
+            if (ringerMode != null) {
+                setRingerMode(ringerMode.ringerMode)
+            } else {
+                setRingerMode(
+                    repository.defaultRingerMode.last()?.map()
+                        ?: ringerUseCase.getCurrentRingerMode()
+                )
+            }
         }
     }
 
-    private fun setDefaultRingerMode() {
-        val default = repository.getDefaultRingerMode(ringerUseCase.getCurrentRingerMode().map())
-        setRingerMode(default.map())
-    }
-
     private fun setRingerMode(newRingerMode: RingerMode) {
-        if (newRingerMode == RingerMode.SILENT && dndUseCase.isDndPermissionGranted() && ringerUseCase.getCurrentRingerMode() != newRingerMode) {
-            notificationCreator.buildDndNotification()
+        if (newRingerMode == RingerMode.SILENT
+            && dndUseCase.isDndPermissionGranted()
+            && ringerUseCase.getCurrentRingerMode() != newRingerMode
+        ) {
+            notificationCreator.showDndPermissionMissing()
         } else {
             ringerUseCase.setRingerMode(newRingerMode)
         }

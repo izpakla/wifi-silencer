@@ -24,11 +24,11 @@ class PrefsLocalDataSource(context: Context) : LocalDataSource {
         dataProvider.writeValue(WIFI_DATA_LIST, wifiDataList)
     }
 
-    override fun getWifiDataList(): ArrayList<WifiData>? {
+    override fun getWifiDataList(): List<WifiData> {
         val listType = object : TypeToken<ArrayList<WifiData>>() {
         }.type
 
-        return dataProvider.readValue<ArrayList<WifiData>>(WIFI_DATA_LIST, listType)
+        return dataProvider.readValue<ArrayList<WifiData>>(WIFI_DATA_LIST, listType) ?: emptyList()
     }
 
     override fun isMonitorServiceStarted(): Boolean {

@@ -1,5 +1,8 @@
 package rs.rocketbyte.wifisilencer.core.notification
 
+import android.app.Notification
+
 interface NotificationCreator {
-    fun buildDndNotification()
+    fun showDndPermissionMissing()
+    fun createServiceNotification(): Notification
 }

@@ -1,70 +1,75 @@
 package rs.rocketbyte.wifisilencer.data.repository
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import rs.rocketbyte.wifisilencer.data.local.LocalDataSource
 import rs.rocketbyte.wifisilencer.data.model.RingerMode
 import rs.rocketbyte.wifisilencer.data.model.WifiData
-import java.util.*
 
 
 internal class DefaultRepository(private val localDataSource: LocalDataSource) : Repository {
 
-    override fun getDefaultRingerMode(currentRingerMode: RingerMode): RingerMode =
-        synchronized(localDataSource) {
-            val ringerMode = localDataSource.getDefaultRingerMode()
-            return if (ringerMode == null) {
-                localDataSource.setDefaultRingerMode(currentRingerMode)
-                currentRingerMode
-            } else {
-                ringerMode
-            }
+    private val job = SupervisorJob()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
+
+    private val _defaultRingerMode = MutableStateFlow(localDataSource.getDefaultRingerMode())
+    override val defaultRingerMode: Flow<RingerMode?>
+        get() = _defaultRingerMode
+
+    private val _wifiRingerInfoList = MutableStateFlow(localDataSource.getWifiDataList())
+    override val wifiDataList: Flow<List<WifiData>>
+        get() = _wifiRingerInfoList
+
+    override var monitoringEnabled: Boolean
+        get() = localDataSource.isMonitorServiceStarted()
+        set(value) {
+            localDataSource.setMonitorServiceStarted(value)
         }
 
-    override fun setDefaultRingerMode(ringerMode: RingerMode) = synchronized(localDataSource) {
+    private fun reloadWifiInfoList() {
+        coroutineScope.launch {
+            _wifiRingerInfoList.emit(localDataSource.getWifiDataList())
+        }
+    }
+
+    override fun addWifiData(wifiData: WifiData) {
+        val data = localDataSource.getWifiDataList().toMutableList()
+        if (data.find { it.ssid == wifiData.ssid } != null) return
+
+        data.add(wifiData)
+        localDataSource.setWifiDataList(data)
+
+        reloadWifiInfoList()
+    }
+
+    override fun updateWifiData(wifiData: WifiData) {
+        val data = localDataSource.getWifiDataList().toMutableList()
+        val i = data.indexOfFirst { it.ssid == wifiData.ssid }.takeIf { it != -1 } ?: return
+
+        data[i] = data[i].copy(description = wifiData.description)
+        localDataSource.setWifiDataList(data)
+
+        reloadWifiInfoList()
+    }
+
+    override fun removeWifiData(wifiData: WifiData) {
+        val data = localDataSource.getWifiDataList().toMutableList()
+        val i = data.indexOfFirst { it.ssid == wifiData.ssid }.takeIf { it != -1 } ?: return
+
+        data.removeAt(i)
+        localDataSource.setWifiDataList(data)
+
+        reloadWifiInfoList()
+    }
+
+    override fun updateDefaultRingerMode(ringerMode: RingerMode) {
         localDataSource.setDefaultRingerMode(ringerMode)
-    }
-
-    override fun getRingerMode(ssid: String): RingerMode? = synchronized(localDataSource) {
-        localDataSource.getWifiDataList()?.find { it.ssid == ssid }?.ringerMode
-    }
-
-    override fun setRingerMode(ssid: String, ringerMode: RingerMode): Boolean =
-        synchronized(localDataSource) {
-            val data = localDataSource.getWifiDataList()
-            val i = data?.indexOfFirst { it.ssid == ssid }?.takeIf { it != -1 }
-                ?: return@synchronized false
-
-            data[i] = data[i].copy(ringerMode = ringerMode)
-            localDataSource.setWifiDataList(data)
-
-            return@synchronized true
+        coroutineScope.launch {
+            _defaultRingerMode.emit(ringerMode)
         }
-
-    override fun addWifiData(ssid: String, description: String?, ringerMode: RingerMode): Boolean =
-        synchronized(localDataSource) {
-            val data = localDataSource.getWifiDataList() ?: ArrayList()
-            if (data.find { it.ssid == ssid } != null) return@synchronized false
-            data.add(WifiData(ssid, description, Date(), ringerMode))
-            localDataSource.setWifiDataList(data)
-            return@synchronized true
-        }
-
-    override fun updateDescription(ssid: String, description: String?): Boolean =
-        synchronized(localDataSource) {
-            val data = localDataSource.getWifiDataList()
-            val i = data?.indexOfFirst { it.ssid == ssid }?.takeIf { it != -1 }
-                ?: return@synchronized false
-
-            data[i] = data[i].copy(description = description)
-            localDataSource.setWifiDataList(data)
-
-            return@synchronized true
-        }
-
-    override fun isMonitoringEnabled(): Boolean = synchronized(localDataSource) {
-        localDataSource.isMonitorServiceStarted()
-    }
-
-    override fun setMonitoringEnabled(enabled: Boolean) = synchronized(localDataSource) {
-        localDataSource.setMonitorServiceStarted(enabled)
     }
 }

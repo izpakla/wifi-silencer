@@ -8,10 +8,17 @@ import android.net.wifi.SupplicantState
 import android.net.wifi.WifiManager
 import android.text.TextUtils
 import android.util.Log
+import dagger.hilt.android.AndroidEntryPoint
 import rs.rocketbyte.wifisilencer.core.commons.ext.bundleToString
-import rs.rocketbyte.wifisilencer.core.receivers.WifiReceiver
+import rs.rocketbyte.wifisilencer.core.manager.WifiConnectionListener
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WifiReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var connectionListener: WifiConnectionListener
+
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
         Log.d(TAG, "action: $action")
@@ -23,17 +30,17 @@ class WifiReceiver : BroadcastReceiver() {
                 WifiManager.WIFI_STATE_UNKNOWN
             )) {
                 WifiManager.WIFI_STATE_DISABLING -> {}
-                WifiManager.WIFI_STATE_DISABLED -> onConnectionStateChanged(context, false)
+                WifiManager.WIFI_STATE_DISABLED -> onConnectionStateChanged(false)
                 WifiManager.WIFI_STATE_ENABLING -> {}
-                WifiManager.WIFI_STATE_ENABLED -> onConnectionStateChanged(context, true)
+                WifiManager.WIFI_STATE_ENABLED -> onConnectionStateChanged(true)
                 WifiManager.WIFI_STATE_UNKNOWN -> {}
                 else -> {}
             }
         } else if (TextUtils.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION, action)) {
             when (intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)?.state) {
-                NetworkInfo.State.CONNECTED -> onConnectionStateChanged(context, true)
+                NetworkInfo.State.CONNECTED -> onConnectionStateChanged(true)
                 NetworkInfo.State.CONNECTING -> {}
-                NetworkInfo.State.DISCONNECTED -> onConnectionStateChanged(context, false)
+                NetworkInfo.State.DISCONNECTED -> onConnectionStateChanged(false)
                 NetworkInfo.State.DISCONNECTING -> {}
                 NetworkInfo.State.SUSPENDED -> {}
                 NetworkInfo.State.UNKNOWN -> {}
@@ -44,8 +51,8 @@ class WifiReceiver : BroadcastReceiver() {
                 SupplicantState.ASSOCIATED -> {}
                 SupplicantState.ASSOCIATING -> {}
                 SupplicantState.AUTHENTICATING -> {}
-                SupplicantState.COMPLETED -> onConnectionStateChanged(context, true)
-                SupplicantState.DISCONNECTED -> onConnectionStateChanged(context, false)
+                SupplicantState.COMPLETED -> onConnectionStateChanged(true)
+                SupplicantState.DISCONNECTED -> onConnectionStateChanged(false)
                 SupplicantState.DORMANT -> {}
                 SupplicantState.FOUR_WAY_HANDSHAKE -> {}
                 SupplicantState.GROUP_HANDSHAKE -> {}
@@ -59,8 +66,8 @@ class WifiReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun onConnectionStateChanged(context: Context, isConnected: Boolean) {
-        // TODO Notify Service
+    private fun onConnectionStateChanged(isConnected: Boolean) {
+        connectionListener.onConnectionChanged(isConnected)
     }
 
     companion object {
