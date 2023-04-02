@@ -1,0 +1,21 @@
+<resources>
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="large_margin">32dp</dimen>
+    <dimen name="default_margin">16dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
+    <dimen name="xsmall_margin">4dp</dimen>
+
+    <dimen name="text_margin">1dp</dimen>
+
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="title_text_size">20sp</dimen>
+
+    <dimen name="copy_text_size">16sp</dimen>
+
+    <dimen name="ringer_mode_icon">46dp</dimen>
+
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/default_margin"
+    android:paddingTop="@dimen/small_margin"
+    android:paddingEnd="@dimen/default_margin"
+    android:paddingBottom="@dimen/small_margin">
+
+    <ImageButton
+        android:id="@id/imageButtonSelection"
+        android:layout_width="@dimen/ringer_mode_icon"
+        android:layout_height="@dimen/ringer_mode_icon"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/button_selection_description"
+        android:scaleType="centerInside"
+        tools:src="@drawable/baseline_vibration_24" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_toStartOf="@id/imageButtonSelection"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/default_text"
+            android:textAppearance="?textAppearanceHeadline2" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textViewSubTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="@string/default_description"
+            android:textAppearance="?textAppearanceBody2" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

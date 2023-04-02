@@ -1,3 +1,58 @@
 <resources>
     <string name="app_name">WiFi Silencer</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_wifi">WiFi network name (SSID):</string>
+    <string name="use_current">Use current</string>
+    <string name="unable_get_ssid">Unable to get WiFi name</string>
+    <string name="default_text">Default sound mode</string>
+    <string name="default_description">Ringer mode when disconnected from WiFi or WiFi not in the list</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_remove">Are you sure you want to remove %s?</string>
+    <string name="sound">Ringer</string>
+    <string name="silent">Silent</string>
+    <string name="vibration">Vibration</string>
+    <string name="sound_mode">Select sound mode for \"%s\"</string>
+    <string name="sound_mode_default">Select default sound mode</string>
+    <string name="ok">OK</string>
+    <string name="button_selection_description">WiFi mode selection button</string>
+    <string name="add_already_exists_error">WiFi already added</string>
+
+    <!-- Notification -->
+    <string name="notification_service_description">Monitoring service is running.</string>
+    <string name="notification_service_stop_action">Stop</string>
+
+    <string name="notification_channel_name">WiFi monitor</string>
+
+    <string name="monitor_service_switch_label">WiFi Monitoring</string>
+    <string name="monitor_service_switch_description">Fow newer Android versions (O and later) system does not provide information to inactive apps when change on network happens. Enabling this will keep the app in "active" state and that will allow it to receive info when connection to a specific network occurs.\n\nBattery usage is minimum.</string>
+    <string name="info">Info</string>
+    <string name="more_info">more info</string>
+    <string name="location_permission_explanation">In order for the app to read WiFi\'s SSID location access has to be granted.</string>
+    <string name="dnd_permission_explanation">In order for the app to set Do Not Disturb (DND) mode settings permission has to be granted.</string>
+
+    <string name="wifi_monitoring_info">To scan for network changes WiFi Monitoring has to be enabled.</string>
+
+    <!-- New strings -->
+
+    <string name="add_new_network">New network</string>
+    <string name="edit_network">Edit network</string>
+    <string name="enter_ssid">Enter SSID</string>
+    <string name="enter_ssid_description">Description (optional)</string>
+    <string name="current">Current</string>
+    <string name="unable_to_get_ssid">Unable to read SSID</string>
+    <string name="enter_ssid_error">Please enter SSID</string>
+    <string name="already_added_ssid_error">SSID is already in the list</string>
+
+    <string name="ssid_added">Added on %s.</string>
+    <string name="remove">Remove</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="network_change_info">Receive information about changes on network.</string>
+
+    <string name="sound_mode_normal">Normal</string>
+    <string name="sound_mode_vibration">Vibration</string>
+    <string name="sound_mode_silent">Silent</string>
+
 </resources>

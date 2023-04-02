@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/default_margin"
+    android:paddingTop="@dimen/small_margin"
+    android:paddingEnd="@dimen/default_margin"
+    android:paddingBottom="@dimen/small_margin">
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchWifiMonitor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        tools:checked="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_toStartOf="@id/switchWifiMonitor"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/monitor_service_switch_label"
+            android:textAppearance="?textAppearanceHeadline1" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="@string/network_change_info"
+            android:textAppearance="?textAppearanceBody1" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textViewMoreInfoWifiMonitoring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/text_margin"
+            android:paddingBottom="@dimen/xsmall_margin"
+            android:text="@string/more_info"
+            android:textAppearance="?textAppearanceCaption"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

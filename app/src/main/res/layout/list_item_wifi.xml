@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/small_margin"
+    android:paddingTop="@dimen/xsmall_margin"
+    android:paddingEnd="@dimen/small_margin"
+    android:paddingBottom="@dimen/xsmall_margin">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="@dimen/default_margin">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/imageButtonSelection"
+                android:layout_width="@dimen/ringer_mode_icon"
+                android:layout_height="@dimen/ringer_mode_icon"
+                android:layout_alignParentStart="true"
+                android:contentDescription="@string/button_selection_description"
+                android:scaleType="centerInside"
+                tools:src="@drawable/baseline_vibration_24" />
+
+            <ImageView
+                android:id="@+id/imageViewMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/baseline_more_vert_24" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_toStartOf="@id/imageViewMenu"
+                android:layout_toEndOf="@id/imageButtonSelection"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?textAppearanceHeadline3"
+                    tools:text="Zivkovic" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewSubTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:textAppearance="?textAppearanceBody2"
+                    android:visibility="gone"
+                    tools:text="Home network."
+                    tools:visibility="visible" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/textViewDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:textAppearance="?textAppearanceBody2"
+                    tools:text="Added 02.01.2016." />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>
